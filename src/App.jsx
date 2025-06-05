@@ -17,6 +17,7 @@ function App() {
 
 	const [data, setData] = useState([])
 	const [search, setSearch] = useState("")
+	const [selectedPosition, setSelectedPosition] = useState("")
 
 
 	const loadData = async () => {
@@ -29,18 +30,36 @@ function App() {
 		loadData();
 	}, []);
 
-	const filtredData = useMemo(() => data.filter(el => el.name.toLowerCase().includes(search.toLowerCase()) ||
-		el.biography.toLowerCase().includes(search.toLowerCase())), [data, search])
+	const filtredData = useMemo(() => data.filter(el => (el.name.toLowerCase().includes(search.toLowerCase()) ||
+		el.biography.toLowerCase().includes(search.toLowerCase())) &&
+		(selectedPosition === "" || el.position === selectedPosition)), [data, search, selectedPosition])
 
 	// console.log(data);
 	// console.log(search);
 
+	// posizioni uniche
+	const positions = useMemo(() => {
+		const list = [];
+		data.forEach(el => {
+			if (!list.includes(el.position)) { list.push(el.position) }
+		});
+		return list;
+	}, [data]);
+
+	// console.log("list", positions);
+	// console.log(position);
+
 	return (
 
 		<>
-			<h2>Lista Politici</h2>
 			<span>Cerca:</span>
 			<input type="text" value={search} onChange={e => setSearch(e.target.value)} />
+
+			<select name="positions" id="positions" onChange={e => setSelectedPosition(e.target.value)}>
+				<option value="">--Please choose an option--</option>
+				{positions.map(el => <option value={el}>{el}</option>)}
+			</select >
+
 			<ul>
 				{filtredData.map(p => (
 					<li key={p.id}>
@@ -48,6 +67,7 @@ function App() {
 					</li>
 				))}
 			</ul>
+			{filtredData.length === 0 && "Nessun risulato trovato"}
 
 		</>
 	)
