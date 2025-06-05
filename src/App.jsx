@@ -1,4 +1,15 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, memo } from "react"
+
+//fuori dal componente per evitare il re render
+const PoliticianCard = memo(({ name, position, biography, image }) => {
+	console.log("Render");
+	return <>
+		<p>{`Nome: ${name}`}</p>
+		<p>{`Posizione: ${position}`}</p>
+		<p>{`Biografia: ${biography}`}</p>
+		<img src={image} alt={name} />
+	</>
+});
 
 function App() {
 
@@ -33,10 +44,7 @@ function App() {
 			<ul>
 				{filtredData.map(p => (
 					<li key={p.id}>
-						<p>{`Nome: ${p.name}`}</p>
-						<p>{`Posizione: ${p.position}`}</p>
-						<p>{`Biografia: ${p.biography}`}</p>
-						<img src={p.image} alt={p.name} />
+						<PoliticianCard name={p.name} position={p.position} biography={p.biography} image={p.image} />
 					</li>
 				))}
 			</ul>
